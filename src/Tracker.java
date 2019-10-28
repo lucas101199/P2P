@@ -3,10 +3,12 @@ import com.sun.net.httpserver.*;
 import java.io.*;
 import java.net.*;
 import java.sql.Connection;
+import java.util.List;
 
 public class Tracker{
 
     public int port;
+    List<Tor>
     //public URL url;
 
     public Tracker(int port) throws IOException {
