@@ -2,6 +2,7 @@ package Torrent;
 
 import java.io.*;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -65,5 +66,10 @@ public class Torrent {
             byte[] buf = md.digest(Arrays.copyOfRange(buffer, 0, bytesAmount));
             pieces.add(buf);
         }
+    }
+
+    public byte[] gethash() throws NoSuchAlgorithmException, UnsupportedEncodingException {
+        MessageDigest md = MessageDigest.getInstance("SHA-1");
+        return md.digest(nameFile.getBytes(StandardCharsets.UTF_8));
     }
 }

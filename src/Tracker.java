@@ -1,49 +1,73 @@
+import Torrent.Torrent;
 import com.sun.net.httpserver.*;
 
 import java.io.*;
 import java.net.*;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
-import java.util.List;
+import java.util.*;
 
 public class Tracker{
 
     public int port;
-    List<Tor>
+    Map<byte[], Torrent> tor;
+    Socket socket;
+    ServerSocket server;
+    DataInputStream in;
     //public URL url;
 
     public Tracker(int port) throws IOException {
-        HttpServer server = HttpServer.create(new InetSocketAddress("localhost", port), 0);
-        HttpContext context = server.createContext("/");
-        context.setHandler(Tracker::handleRequest);
-        server.start();
+        this.tor = new HashMap<>();
+        server = new ServerSocket(port);
     }
 
-    private static void handleRequest(HttpExchange exchange) throws IOException {
-        URI requestURI = exchange.getRequestURI();
-        printRequestInfo(exchange);
-        String response = "This is the response at " + requestURI;
-        exchange.sendResponseHeaders(200, response.getBytes().length);
-        OutputStream os = exchange.getResponseBody();
-        os.write(response.getBytes());
-        os.close();
+    public void add_torrent(Torrent torrent) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+        tor.put(torrent.gethash(), torrent);
     }
 
-    private static void printRequestInfo(HttpExchange exchange) {
-        System.out.println("-- headers --");
-        Headers requestHeaders = exchange.getRequestHeaders();
-        requestHeaders.entrySet().forEach(System.out::println);
+    public Map<byte[], Torrent> getTor() {
+        return tor;
+    }
 
-        System.out.println("-- principle --");
-        HttpPrincipal principal = exchange.getPrincipal();
-        System.out.println(principal);
+    public void run() throws IOException {
+        System.out.println("Server started");
 
-        System.out.println("-- HTTP method --");
-        String requestMethod = exchange.getRequestMethod();
-        System.out.println(requestMethod);
+        System.out.println("Waiting for a client ...");
 
-        System.out.println("-- query --");
-        URI requestURI = exchange.getRequestURI();
-        String query = requestURI.getQuery();
-        System.out.println(query);
+        socket = server.accept();
+        System.out.println("Client accepted");
+
+        // takes input from the client socket
+        InputStreamReader in = new InputStreamReader(socket.getInputStream());
+        BufferedReader bf = new BufferedReader(in);
+
+        PrintWriter pr = new PrintWriter(socket.getOutputStream());
+        String str;
+
+        str = bf.readLine();
+        System.out.println(str);
+        String[] ss = str.split(";");
+        System.out.println(Arrays.toString(ss));
+
+        for(Map.Entry<byte[], Torrent> entry : tor.entrySet()) {
+            byte[] cle = entry.getKey();
+            Torrent value = entry.getValue();
+
+            String te = Arrays.toString(cle);
+            System.out.println("cle : " + te);
+            if (te.equals(ss[2])) {
+                pr.println("got it");
+                //need to return list of peer to the client
+                pr.println(value);
+            }
+            else {
+                System.out.println("not got it");
+            }
+        }
+
+        System.out.println(ss[2]);
+        System.out.println(getTor().keySet());
+        pr.flush();
     }
 }
