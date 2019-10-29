@@ -1,3 +1,4 @@
+import Peers.Peers;
 import Torrent.Torrent;
 import Torrent.Torrent_track;
 import java.io.File;
@@ -19,8 +20,11 @@ public class Main {
         //Creating a new server which contains all torrents
         Tracker tr = new Tracker(8080);
         //System.out.println(Arrays.toString(by));
-        tr.add_torrent(torrent);
-        Map<byte[], Torrent> tor = tr.getTor();
+        tr.add_torrent(torrent, track);
+        Peers initial_seeder = new Peers(1, 9007);
+        track.FillWithSeeder(initial_seeder);
+
+        //Map<byte[], Torrent> tor = tr.getTor();
         tr.run();
         //System.out.println(tor);
 

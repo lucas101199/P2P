@@ -9,7 +9,7 @@ import java.util.*;
 public class Tracker{
 
     public int port;
-    Map<byte[], Torrent> tor;
+    Map<byte[], Torrent_track> tor;
     Socket socket;
     ServerSocket server;
     DataInputStream in;
@@ -20,15 +20,16 @@ public class Tracker{
         server = new ServerSocket(port);
     }
 
-    public void add_torrent(Torrent torrent) throws NoSuchAlgorithmException, UnsupportedEncodingException {
-        tor.put(torrent.gethash(), torrent);
+    public void add_torrent(Torrent torrent, Torrent_track track) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+        tor.put(torrent.gethash(), track);
     }
 
-    public Map<byte[], Torrent> getTor() {
+    public Map<byte[], Torrent_track> getTor() {
         return tor;
     }
 
     //communication with the client return list of peers via the PrintWriter if tracker got the torrent
+    //TODO collect pieces send by the client that he already have and use this in method getListPeers
     public void run() throws IOException {
         System.out.println("Server started");
 
@@ -49,32 +50,35 @@ public class Tracker{
         String[] ss = str.split(";");
         System.out.println(Arrays.toString(ss));
 
-        for(Map.Entry<byte[], Torrent> entry : tor.entrySet()) {
+        for(Map.Entry<byte[], Torrent_track> entry : tor.entrySet()) {
             byte[] cle = entry.getKey();
-            Torrent value = entry.getValue();
+            Torrent_track track = entry.getValue();
 
             String te = Arrays.toString(cle);
             System.out.println("cle : " + te);
+            //List<byte[]> bytes = new LinkedList<>();
             if (te.equals(ss[2])) {
                 pr.println("got it");
                 //need to return list of peer to the client
-                pr.println(value);
+                List<Peers> peers = getListPeers(track);
+                pr.println(peers);
+                System.out.println(peers);
             }
             else {
                 System.out.println("not got it");
             }
         }
 
-        System.out.println(ss[2]);
-        System.out.println(getTor().keySet());
+        //System.out.println(ss[2]);
+        //System.out.println(getTor().keySet());
         pr.flush();
     }
 
-    public List<Peers> getListPeers(Torrent_track track, List<byte[]> pieces_already_download, Torrent torrent) {
+    public List<Peers> getListPeers(Torrent_track track) {
         List<Peers> peers = new LinkedList<>();
 
         for (int i = 0; i < 5; i++) {
-            byte[] bytes = torrent.getPieces().get(RandomNumber(track));
+            byte[] bytes = track.getTorrent().getPieces().get(RandomNumber(track));
             List<Peers> peer = track.getHashMap().get(bytes);
             for (Peers per : peer) {
                 if (! peers.contains(per)) {
