@@ -1,11 +1,9 @@
-import Torrent.Torrent;
-import com.sun.net.httpserver.*;
+import Peers.Peers;
+import Torrent.*;
 
 import java.io.*;
 import java.net.*;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.sql.Connection;
 import java.util.*;
 
 public class Tracker{
@@ -30,6 +28,7 @@ public class Tracker{
         return tor;
     }
 
+    //communication with the client return list of peers via the PrintWriter if tracker got the torrent
     public void run() throws IOException {
         System.out.println("Server started");
 
@@ -69,5 +68,24 @@ public class Tracker{
         System.out.println(ss[2]);
         System.out.println(getTor().keySet());
         pr.flush();
+    }
+
+    public List<Peers> getListPeers(Torrent_track track, List<byte[]> pieces_already_download, Torrent torrent) {
+        List<Peers> peers = new LinkedList<>();
+
+        for (int i = 0; i < 5; i++) {
+            byte[] bytes = torrent.getPieces().get(RandomNumber(track));
+            List<Peers> peer = track.getHashMap().get(bytes);
+            for (Peers per : peer) {
+                if (! peers.contains(per)) {
+                    peers.add(per);
+                }
+            }
+        }
+        return peers;
+    }
+
+    public int RandomNumber(Torrent_track torrent) {
+        return (int) (Math.random() * torrent.getHashMap().size());
     }
 }
