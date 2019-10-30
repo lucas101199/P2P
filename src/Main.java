@@ -21,7 +21,7 @@ public class Main {
         Tracker tr = new Tracker(8080);
         //System.out.println(Arrays.toString(by));
         tr.add_torrent(torrent, track);
-        Peers initial_seeder = new Peers(1, 9007);
+        Peers initial_seeder = new Peers(1, 9007, torrent);
         track.FillWithSeeder(initial_seeder);
 
         //Map<byte[], Torrent> tor = tr.getTor();
