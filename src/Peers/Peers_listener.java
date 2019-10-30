@@ -37,7 +37,7 @@ public class Peers_listener extends Thread{
             }
 
             //new talker
-            new Thread(new Client(talkSocket, peer)).start();
+            new Thread((Runnable) new Peers_client(talkSocket, peer)).start();
         }
     }
 }

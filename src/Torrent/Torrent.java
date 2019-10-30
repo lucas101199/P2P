@@ -68,7 +68,7 @@ public class Torrent {
         }
     }
 
-    public byte[] gethash() throws NoSuchAlgorithmException, UnsupportedEncodingException {
+    public byte[] gethash() throws NoSuchAlgorithmException {
         MessageDigest md = MessageDigest.getInstance("SHA-1");
         return md.digest(nameFile.getBytes(StandardCharsets.UTF_8));
     }
