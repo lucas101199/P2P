@@ -58,10 +58,10 @@ public class Tracker{
             System.out.println("cle : " + te);
             //List<byte[]> bytes = new LinkedList<>();
             if (te.equals(ss[2])) {
-                pr.println("got it");
+
                 //need to return list of peer to the client
                 List<Peers> peers = getListPeers(track);
-                pr.println(peers);
+                pr.println(peers.get(0).getId() + ":" + peers.get(0).getPort());
                 System.out.println(peers);
             }
             else {
