@@ -6,6 +6,7 @@ import java.io.*;
 import java.nio.ByteBuffer;
 import java.security.MessageDigest;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.Map;
 
 //seeder is build from a peer who has downloaded every pieces of a file
@@ -56,12 +57,13 @@ public class Seeder {
         while ((bytesAmount = bis.read(buffer)) > 0) {
             byte[] buf = md.digest(Arrays.copyOfRange(buffer, 0, bytesAmount));
 
-            for (Map.Entry<byte[], byte[]> entry : data.entrySet()) {
+            for (Iterator<Map.Entry<byte[], byte[]>> iterator = data.entrySet().iterator(); iterator.hasNext(); ) {
+                Map.Entry<byte[], byte[]> entry = iterator.next();
                 byte[] hashPieces = entry.getKey();
-                if (buf == hashPieces) {
+                if (Arrays.equals(buf, hashPieces)) {
                     entry.setValue(buffer);
+                    break;
                 }
-                break;
             }
         }
     }
