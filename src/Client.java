@@ -46,7 +46,7 @@ public class Client {
         System.out.println(str);
         List<Peers> peer = new LinkedList<>();
         String[] ss = str.split(":");
-        Peers peers = new Peers(Integer.valueOf(ss[0]), Integer.valueOf(ss[1]));
+        Peers peers = new Peers(Integer.parseInt(ss[0]), Integer.parseInt(ss[1]), torrent);
         peer.add(peers);
         System.out.println(peer);
         return peer;
