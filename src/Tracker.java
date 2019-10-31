@@ -9,10 +9,10 @@ import java.util.*;
 public class Tracker{
 
     public int port;
-    Map<byte[], Torrent_track> tor;
-    Socket socket;
-    ServerSocket server;
-    DataInputStream in;
+    public Map<byte[], Torrent_track> tor;
+    public Socket socket;
+    public ServerSocket server;
+    public DataInputStream in;
     //public URL url;
 
     public Tracker(int port) throws IOException {

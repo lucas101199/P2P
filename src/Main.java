@@ -11,7 +11,7 @@ public class Main {
 
     public static void main(String args[]) throws IOException, NoSuchAlgorithmException {
         //File use for define the new torrent
-        File file = new File("/home/ens19/ens19lfz/edu/5DV205/assignments/project/src/Torrent/test_image.png");
+        File file = new File(System.getProperty("user.dir") + "/src/Torrent/test_image.png");
 
         //creation of new torrent and his torrent tracker associate
         Torrent torrent = new Torrent(new URL("http://localhost:8080"), file, 256);

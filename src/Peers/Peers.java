@@ -1,19 +1,21 @@
 package Peers;
 
+import Seeder.Seeder;
 import Torrent.Torrent;
 
+import java.io.File;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Peers {
 
-    int id;
-    int port;
-    InetSocketAddress address;
-    Peers_listener l ;
-    Torrent torrent;
-    Map<byte[], byte[]> data; //hashmap which contains the data(second byte[]) for each pieces(first byte[]) of the file
+    public int id;
+    public int port;
+    public InetSocketAddress address;
+    public Peers_listener l ;
+    public Torrent torrent;
+    public Map<byte[], byte[]> data; //hashmap which contains the data(second byte[]) for each pieces(first byte[]) of the file
 
     public Peers(int id, int port, Torrent torrent) {
         this.id = id;
@@ -25,12 +27,18 @@ public class Peers {
         //fill the hashmap for the first time when a new peer is created with all the hash of pieces contains in the torrent and data to null
         for (byte[] pieces : torrent.getPieces()) {
             byte[] data_downloaded = new byte[256];
-            data.put(pieces, data_downloaded);
+            this.data.put(pieces, data_downloaded);
         }
 
         l = new Peers_listener(this);
         l.start();
+    }
 
+    //Initial seeder
+    public Peers(int id, int port, Torrent torrent, File file) throws Exception {
+        Peers peer = new Peers(id, port, torrent);
+        Seeder seeder = new Seeder(peer, file);
+        seeder.FillHashMapWithDataWhenInitialSeeder(file, peer.getMap());
     }
 
     public int getId() {
@@ -47,6 +55,10 @@ public class Peers {
 
     public Torrent getTorrent() {
         return torrent;
+    }
+
+    public Map<byte[], byte[]> getMap() {
+        return this.data;
     }
 
     //become seeder when finish to download entire file
