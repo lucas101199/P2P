@@ -1,26 +1,54 @@
-import java.io.InputStream;
+import Peers.Peers;
+import Torrent.Torrent;
+
+import java.io.*;
 import java.net.*;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 public class Client {
 
     int peer_id;
+    int port;
+    Torrent torrent;
+    int dowloaded;
+    DataInputStream input;
+    DataOutputStream out;
+    Socket socket;
 
-    public Client(int peer_id) {
+    public Client(int peer_id, int port)  {
         this.peer_id = peer_id;
+        this.port = port;
     }
 
-    public static void main(String args[]) throws Exception {
-        Client client = new Client(20);
-        String url = "http://localhost:8080";
-        String charset = "UTF-8";  // Or in Java 7 and later, use the constant: java.nio.charset.StandardCharsets.UTF_8.name()
+    public URL getUrl(Torrent torrent) {
+        return torrent.getTrackerURL();
+    }
 
-        String param1 = String.valueOf(client.peer_id);
+    public List<Peers> request(int peer_id, int port, int url, Torrent torrent) throws Exception {
+        socket = new Socket("localhost", url);
+        System.out.println("Connected");
 
-        String query = String.format("peer_id=%s",
-                URLEncoder.encode(param1, charset));
+        // send request
+        PrintWriter pr = new PrintWriter(socket.getOutputStream());
+        pr.println(peer_id + ";" + port + ";" + Arrays.toString(torrent.gethash()));
+        pr.flush();
 
-        URLConnection connection = new URL(url + "?" + query).openConnection();
-        connection.setRequestProperty("Accept-Charset", charset);
-        InputStream response = connection.getInputStream();
+        Thread.sleep(3000);
+        // sends output to the socket
+        InputStreamReader in = new InputStreamReader(socket.getInputStream());
+        BufferedReader bf = new BufferedReader(in);
+
+        String str = bf.readLine();
+        System.out.println(str);
+        List<Peers> peer = new LinkedList<>();
+        String[] ss = str.split(":");
+        Peers peers = new Peers(Integer.valueOf(ss[0]), Integer.valueOf(ss[1]));
+        peer.add(peers);
+        System.out.println(peer);
+        return peer;
     }
 }
