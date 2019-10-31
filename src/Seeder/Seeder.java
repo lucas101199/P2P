@@ -2,25 +2,26 @@ package Seeder;
 
 import Peers.Peers;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.ByteBuffer;
+import java.security.MessageDigest;
+import java.util.Arrays;
 import java.util.Map;
 
 //seeder is build from a peer who has downloaded every pieces of a file
 
 public class Seeder {
 
-    Peers peers;
-    File complete_file;
+    public Peers peers;
+    public File complete_file;
 
     public Seeder(Peers peer) {
         this.peers = peer;
     }
 
     //build a new seeder with file if it is the initial seeder
-    public Seeder(File file) {
+    public Seeder(Peers peers, File file) {
+        this.peers = peers;
         this.complete_file = file;
     }
 
@@ -37,13 +38,31 @@ public class Seeder {
 
         byte[] combined = buff.array();
 
-        try (FileOutputStream fos = new FileOutputStream("/home/ens19/ens19lfz/edu/5DV205/assignments/project/src/Seeder")) {
+        try (FileOutputStream fos = new FileOutputStream(System.getProperty("user.dir") + "/src/Seeder")) {
             fos.write(combined);
         }
     }
 
-    //fill the hash map on class Peers with the file (to this only when it is the initial seeder cause after for the other peers the hash map will be fill with the data send by the other peers or seeder
-    public void FillHashMapWithDataWhenInitialSeeder(File file) {
+    //fill the hash map on class Peers with the file (to this only when it is the initial seeder cause after for the other peers the hash map will be fill with the data send by the other peers or seeder)
+    public void FillHashMapWithDataWhenInitialSeeder(File file, Map<byte[], byte[]> data) throws Exception {
+        byte[] buffer = new byte[1024 * 256];
 
+        FileInputStream fis = new FileInputStream(file);
+        BufferedInputStream bis = new BufferedInputStream(fis);
+
+        MessageDigest md = MessageDigest.getInstance("SHA-1");
+
+        int bytesAmount;
+        while ((bytesAmount = bis.read(buffer)) > 0) {
+            byte[] buf = md.digest(Arrays.copyOfRange(buffer, 0, bytesAmount));
+
+            for (Map.Entry<byte[], byte[]> entry : data.entrySet()) {
+                byte[] hashPieces = entry.getKey();
+                if (buf == hashPieces) {
+                    entry.setValue(buffer);
+                }
+                break;
+            }
+        }
     }
 }
