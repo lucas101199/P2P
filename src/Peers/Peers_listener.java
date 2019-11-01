@@ -21,7 +21,7 @@ public class Peers_listener extends Thread{
         try {
             serverSocket = new ServerSocket(port);
         } catch (IOException e) {
-            throw new RuntimeException("\nCannot open listener port "+port+". Now exit.\n", e);
+            throw new RuntimeException("\nCannot open listener port " + port + ". Now exit.\n", e);
         }
     }
 
