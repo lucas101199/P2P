@@ -5,8 +5,7 @@ import Peers.Peers;
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.security.MessageDigest;
-import java.util.Arrays;
-import java.util.Map;
+import java.util.*;
 
 //seeder is build from a peer who has downloaded every pieces of a file
 
@@ -44,25 +43,31 @@ public class Seeder {
     }
 
     //fill the hash map on class Peers with the file (to this only when it is the initial seeder cause after for the other peers the hash map will be fill with the data send by the other peers or seeder)
-    public void FillHashMapWithDataWhenInitialSeeder(File file, Map<byte[], byte[]> data) throws Exception {
-        byte[] buffer = new byte[1024 * 256];
+    public Map<byte[], byte[]> FillHashMapWithDataWhenInitialSeeder(File file, List<byte[]> data) throws Exception {
+
+        Map<byte[], byte[]> mapComplete = new HashMap<>();
 
         FileInputStream fis = new FileInputStream(file);
         BufferedInputStream bis = new BufferedInputStream(fis);
 
         MessageDigest md = MessageDigest.getInstance("SHA-1");
+        int from = 0;
 
-        int bytesAmount;
-        while ((bytesAmount = bis.read(buffer)) > 0) {
-            byte[] buf = md.digest(Arrays.copyOfRange(buffer, 0, bytesAmount));
+        byte[] dataInBuffer = bis.readAllBytes();
 
-            for (Map.Entry<byte[], byte[]> entry : data.entrySet()) {
-                byte[] hashPieces = entry.getKey();
-                if (buf == hashPieces) {
-                    entry.setValue(buffer);
-                }
-                break;
+        int bytesAmount = 1024 * 256;
+        int remainingBytes = (int) peers.torrent.getLength();
+
+        for (int i = 0; i < peers.torrent.numberPieces(); i++) {
+            if (bytesAmount > remainingBytes) {
+                bytesAmount = remainingBytes;
             }
+            byte[] buf = md.digest(Arrays.copyOfRange(dataInBuffer, from, bytesAmount + from));
+            byte[] dd = Arrays.copyOfRange(dataInBuffer, from, bytesAmount + from);
+            from += 256 * 1024;
+            remainingBytes -= bytesAmount;
+            mapComplete.put(buf, dd);
         }
+        return mapComplete;
     }
 }

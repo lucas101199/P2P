@@ -36,9 +36,18 @@ public class Peers {
 
     //Initial seeder
     public Peers(int id, int port, Torrent torrent, File file) throws Exception {
-        Peers peer = new Peers(id, port, torrent);
-        Seeder seeder = new Seeder(peer, file);
-        seeder.FillHashMapWithDataWhenInitialSeeder(file, peer.getMap());
+        this.id = id;
+        this.port = port;
+        this.torrent = torrent;
+        this.address = new InetSocketAddress("localhost", this.port);
+        this.data = new HashMap<>();
+
+        l = new Peers_listener(this);
+        l.start();
+
+        //fill the hashmap for the first time when a new peer is created with all the hash of pieces and data of the file
+        Seeder seeder = new Seeder(this, file);
+        this.data = seeder.FillHashMapWithDataWhenInitialSeeder(file, torrent.getPieces());
     }
 
     public int getId() {
