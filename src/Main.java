@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class Main {
 
-    public static void main(String args[]) throws IOException, NoSuchAlgorithmException {
+    public static void main(String args[]) throws Exception {
         //File use for define the new torrent
         File file = new File(System.getProperty("user.dir") + "/src/Torrent/test_image.png");
 
@@ -21,7 +21,7 @@ public class Main {
         Tracker tr = new Tracker(8080);
         //System.out.println(Arrays.toString(by));
         tr.add_torrent(torrent, track);
-        Peers initial_seeder = new Peers(1, 9007, torrent);
+        Peers initial_seeder = new Peers(12, 9009, torrent, file);
         track.FillWithSeeder(initial_seeder);
 
         //Map<byte[], Torrent> tor = tr.getTor();

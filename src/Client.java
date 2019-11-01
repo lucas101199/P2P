@@ -5,9 +5,7 @@ import java.io.*;
 import java.net.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class Client {
 
@@ -28,7 +26,7 @@ public class Client {
         return torrent.getTrackerURL();
     }
 
-    public List<Peers> request(int peer_id, int port, int url, Torrent torrent) throws Exception {
+    public Map<Integer, Integer> request(int peer_id, int port, int url, Torrent torrent) throws Exception {
         socket = new Socket("localhost", url);
         System.out.println("Connected");
 
@@ -44,11 +42,10 @@ public class Client {
 
         String str = bf.readLine();
         System.out.println(str);
-        List<Peers> peer = new LinkedList<>();
+        Map<Integer, Integer> port_peer = new HashMap<>();
         String[] ss = str.split(":");
-        Peers peers = new Peers(Integer.parseInt(ss[0]), Integer.parseInt(ss[1]), torrent);
-        peer.add(peers);
-        System.out.println(peer);
-        return peer;
+        port_peer.put(Integer.parseInt(ss[0]), Integer.parseInt(ss[1]));
+        System.out.println(port_peer);
+        return port_peer;
     }
 }
