@@ -42,17 +42,12 @@ public class Peers {
         this.address = new InetSocketAddress("localhost", this.port);
         this.data = new HashMap<>();
 
-        //fill the hashmap for the first time when a new peer is created with all the hash of pieces contains in the torrent and data to null
-        for (byte[] pieces : torrent.getPieces()) {
-            byte[] data_downloaded = new byte[256];
-            this.data.put(pieces, data_downloaded);
-        }
-
         l = new Peers_listener(this);
         l.start();
 
+        //fill the hashmap for the first time when a new peer is created with all the hash of pieces and data of the file
         Seeder seeder = new Seeder(this, file);
-        seeder.FillHashMapWithDataWhenInitialSeeder(file, this.getMap());
+        this.data = seeder.FillHashMapWithDataWhenInitialSeeder(file, torrent.getPieces());
     }
 
     public int getId() {
