@@ -1,6 +1,7 @@
 import Torrent.Torrent;
 import java.io.File;
 import java.net.URL;
+import java.util.Map;
 
 public class Main_Client {
 
@@ -11,7 +12,7 @@ public class Main_Client {
         //System.out.println(by);
         Client client = new Client(20, 9000);
 
-        client.request(client.peer_id, client.port, client.getUrl(torrent).getPort(), torrent);
+        Map<Integer, Integer> list_peers = client.request(client.peer_id, client.port, client.getUrl(torrent).getPort(), torrent);
 
     }
 }

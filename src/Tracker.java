@@ -9,13 +9,14 @@ import java.util.*;
 public class Tracker{
 
     public int port;
-    public Map<byte[], Torrent_track> tor;
+    public Map<byte[], Torrent_track> tor; //byte[] = hash of the name of the file; Torrent_track = keep track of pieces and peers
     public Socket socket;
     public ServerSocket server;
     public DataInputStream in;
     //public URL url;
 
     public Tracker(int port) throws IOException {
+        this.port = port;
         this.tor = new HashMap<>();
         server = new ServerSocket(port);
     }
