@@ -5,7 +5,7 @@ import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class Peers_listener extends Thread{
+public class Peers_listener implements Runnable{
 
     private Peers peer;
     private ServerSocket serverSocket;
@@ -20,6 +20,7 @@ public class Peers_listener extends Thread{
         //open server/listener socket
         try {
             serverSocket = new ServerSocket(port);
+            System.out.println("Listening on port " + localAddress.getPort());
         } catch (IOException e) {
             throw new RuntimeException("\nCannot open listener port " + port + ". Now exit.\n", e);
         }
@@ -31,13 +32,18 @@ public class Peers_listener extends Thread{
             Socket talkSocket = null;
             try {
                 talkSocket = serverSocket.accept();
+                System.out.println(talkSocket.getPort());
             } catch (IOException e) {
                 throw new RuntimeException(
                         "Cannot accepting connection", e);
             }
 
             //new talker
-            new Thread((Runnable) new Peers_client(talkSocket, peer)).start();
+            new Thread();
         }
+    }
+
+    public void disconnect() throws IOException {
+        serverSocket.close();
     }
 }

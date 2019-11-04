@@ -22,14 +22,12 @@ public class Peers_client {
             input = talkSocket.getInputStream();
             String request = inputStreamToString(input);
 
-
             output = talkSocket.getOutputStream();
-
 
             input.close();
         } catch (IOException e) {
             throw new RuntimeException(
-                    "Cannot talk.\nServer port: "+peer.getAddress().getPort()+"; Talker port: "+talkSocket.getPort(), e);
+                    "Cannot talk.\nServer port: " + peer.getAddress().getPort() + "; Talker port: " + talkSocket.getPort(), e);
         }
     }
 

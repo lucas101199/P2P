@@ -14,11 +14,11 @@ public class Torrent_track {
         this.track = new HashMap<>();
         //fill the map with all the pieces contain in the torrent file
         for(byte[] piece : torrent.getPieces()) {
-            track.put(piece, new LinkedList<Peers>());
+            track.put(piece, new LinkedList<>());
         }
     }
 
-    public void fillMapWithId(Peers peer_id, byte[] piece) {
+    public void fillMapWithPeer(Peers peer_id, byte[] piece) {
         List<Peers> old_list = track.get(piece);
         List<Peers> list_peer = track.get(piece);
         list_peer.add(peer_id);

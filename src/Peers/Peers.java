@@ -4,7 +4,9 @@ import Seeder.Seeder;
 import Torrent.Torrent;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -47,7 +49,13 @@ public class Peers {
 
         //fill the hashmap for the first time when a new peer is created with all the hash of pieces and data of the file
         Seeder seeder = new Seeder(this, file);
-        this.data = seeder.FillHashMapWithDataWhenInitialSeeder(file, torrent.getPieces());
+        this.data = seeder.FillHashMapWithDataWhenInitialSeeder(file);
+    }
+
+    public Peers(int id, int port) {
+        this.id = id;
+        this.port = port;
+        this.address = new InetSocketAddress("localhost", this.port);
     }
 
     public int getId() {
@@ -70,6 +78,11 @@ public class Peers {
         return this.data;
     }
 
-    //become seeder when finish to download entire file
+    public void disconnect() throws IOException {
+        l.disconnect();
+    }
 
+    public void connectToPeer(Peers peers) throws IOException {
+        new Peers_client(new Socket("localhost", peers.port), peers).run();
+    }
 }

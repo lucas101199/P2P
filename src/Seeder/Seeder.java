@@ -43,7 +43,7 @@ public class Seeder {
     }
 
     //fill the hash map on class Peers with the file (to this only when it is the initial seeder cause after for the other peers the hash map will be fill with the data send by the other peers or seeder)
-    public Map<byte[], byte[]> FillHashMapWithDataWhenInitialSeeder(File file, List<byte[]> data) throws Exception {
+    public Map<byte[], byte[]> FillHashMapWithDataWhenInitialSeeder(File file) throws Exception {
 
         Map<byte[], byte[]> mapComplete = new HashMap<>();
 
