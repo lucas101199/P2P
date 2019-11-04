@@ -1,6 +1,8 @@
 import Peers.Peers;
 import Torrent.Torrent;
 import Torrent.Torrent_track;
+
+import java.awt.desktop.SystemSleepListener;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -23,10 +25,9 @@ public class Main {
         tr.add_torrent(torrent, track);
         Peers initial_seeder = new Peers(12, 9009, torrent, file);
         track.FillWithSeeder(initial_seeder);
-
+        initial_seeder.disconnect();
         //Map<byte[], Torrent> tor = tr.getTor();
         tr.run();
         //System.out.println(tor);
-
     }
 }
