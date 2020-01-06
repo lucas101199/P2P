@@ -9,6 +9,6 @@ public class main_seeder {
         File file = new File(System.getProperty("user.dir") + "/src/Torrent/test_image.png");
         Torrent torrent = new Torrent(new URL("http://localhost:8080"), file, 256);
 
-        Peers peers = new Peers(12, 9001, torrent, file);
+
     }
 }
